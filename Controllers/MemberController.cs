@@ -17,18 +17,14 @@ namespace WebApplication1.Controllers
         public IActionResult GetAllUsers()
         {
             var users = _memberService.GetAll();
-            return Ok(users);
+            return users is null ? NotFound() : Ok(users);
         }
 
         [HttpGet("GetUserById/{id}")]   
         public IActionResult GetUserById(string id)
         {
-            var user = _memberService.GetById(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(user);
+            var user =  _memberService.GetById(id);
+            return user is null ? NotFound() : Ok(user);
         }
 
         [HttpPost("AddUser")]
@@ -38,7 +34,6 @@ namespace WebApplication1.Controllers
             {
                 return BadRequest("Member is null.");
             }
-            member.Id = Guid.NewGuid().ToString();
             var addedMember = await _memberService.Add(member);
             return CreatedAtAction(nameof(GetUserById), new { id = addedMember.Id }, addedMember);
         }
@@ -50,39 +45,16 @@ namespace WebApplication1.Controllers
             {
                 return BadRequest("Member is null or ID mismatch.");
             }
-            var existing = _memberService.GetById(member.Id);
-            if (existing == null) return NotFound();
 
-            existing.Name = member.Name;
-            existing.Email = member.Email;
-            existing.isActive = member.isActive;
-
-
-            _memberService.Update(existing);
-            return NoContent();
-
-            //if (member == null || string.IsNullOrEmpty(member.Id))
-            //{
-            //    return BadRequest("Member is null or ID mismatch.");
-            //}
-            //var existingMember = _memberService.GetById(member.Id);
-            //if (existingMember == null)
-            //{
-            //    return NotFound();
-            //}
-            //_memberService.Update(member);
-            //return NoContent();
+            var updatedUser = _memberService.Update(member);
+            return updatedUser is null ? NotFound() : Ok(updatedUser);
         }
 
         [HttpDelete("DeleteUser/{id}")]
         public IActionResult DeleteUser(string id)
         {
-            var existingMember = _memberService.GetById(id);
-            if (existingMember == null)
-            {
-                return NotFound();
-            }
-            _memberService.Delete(id);
+            
+            var status = _memberService.Delete(id);
             return NoContent();
         }
     }

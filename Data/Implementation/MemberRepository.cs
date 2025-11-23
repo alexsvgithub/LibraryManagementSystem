@@ -39,13 +39,18 @@ namespace WebApplication1.Data.Implementation
             _context.SaveChanges();
         }
 
-        public void Delete(string id)
+        public string Delete(string id)
         {
             var member = _context.Members.Find(id);
             if (member != null)
             {
                 _context.Members.Remove(member);
                 _context.SaveChanges();
+                return "Member Deleted Successfully";
+            }
+            else
+            {
+                return $"No Member Found with the Id = {id}";
             }
         }
     }

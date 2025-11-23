@@ -9,7 +9,7 @@ namespace WebApplication1.Data.Interface
         Member? GetById(string id);
         Task<Member> Add(Member member);
         void Update(Member member);
-        void Delete(string id);
+        string Delete(string id);
 
     }
 }

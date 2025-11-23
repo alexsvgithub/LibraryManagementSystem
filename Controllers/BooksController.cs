@@ -30,10 +30,10 @@ public class BooksController : ControllerBase
         return result is null ? NotFound() : Ok(result);
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, Book book)
+    [HttpPut]
+    public IActionResult Put(Book book)
     {
-        if (id != book.Id) return BadRequest();
+        if (book.Id == null)  return BadRequest();
         _service.Update(book);
         return Ok();
     }

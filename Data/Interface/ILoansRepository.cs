@@ -8,6 +8,6 @@ namespace WebApplication1.Data.Interface
         List<Loan> GetByBorrowedHistory(string memberIdd);
 
         Task LoanBook(int bookId, string memberId);
-        Task ReturnBook(string id);
+        Task ReturnBook(string id, int bookId);
     }
 }

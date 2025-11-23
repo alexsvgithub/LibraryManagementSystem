@@ -34,10 +34,7 @@ public class BookRepository : IBookRepository
     }
     public void Update(Book book)
     {
-
-        var result = _context.Books.Update(book);
         _context.SaveChanges();
-
 
     }
     public void Delete(int id)

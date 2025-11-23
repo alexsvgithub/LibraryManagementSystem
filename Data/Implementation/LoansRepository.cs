@@ -53,16 +53,23 @@ namespace WebApplication1.Data.Implementation
             }
         }
 
-        public async Task ReturnBook(string id)
+        public async Task ReturnBook(string id, int bookId)
         {   
             var loan = new Loan { Id = id };
             _context.Loans.Attach(loan);
 
+            var book = new Book { Id = bookId};
+            _context.Books.Attach(book);
+
             loan.isReturned = true;
             loan.ReturnedAt = DateTime.Now;
 
+            book.NoOfCopiesAvailable += 1;
+
             _context.Entry(loan).Property(x => x.isReturned).IsModified = true;
             _context.Entry(loan).Property(x => x.ReturnedAt).IsModified = true;
+
+            _context.Entry(book).Property(x => x.NoOfCopiesAvailable).IsModified = true;
 
             await _context.SaveChangesAsync();
 

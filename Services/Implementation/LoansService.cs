@@ -7,9 +7,11 @@ namespace WebApplication1.Services.Implementation
     public class LoansService : ILoansService
     {
         private readonly ILoansRepository _loansRepository;
-        public LoansService(ILoansRepository loansRepository)
+        private readonly IBookRepository _bookRepository;
+        public LoansService(ILoansRepository loansRepository, IBookRepository bookRepository)
         {
             _loansRepository = loansRepository;
+            _bookRepository = bookRepository;
         }
         public IEnumerable<Loan> GetAllBorrowed(string memberId)
         {
@@ -34,6 +36,20 @@ namespace WebApplication1.Services.Implementation
                 return "Book is already borrowed by the member";
             }
 
+            var bookLoaned = _bookRepository.GetById(bookId);
+            if (bookLoaned == null)
+            {
+                return "Book not found";
+            }
+
+            if(bookLoaned.NoOfCopiesAvailable == 0 )
+            {
+                return "No Books Available To Borrow.";
+            }
+
+            bookLoaned.NoOfCopiesAvailable -= 1;
+            _bookRepository.Update(bookLoaned);
+
             await _loansRepository.LoanBook(bookId, memberId);
             return "Book Issued Successfully";
         }
@@ -45,7 +61,7 @@ namespace WebApplication1.Services.Implementation
             {
                 return "No active loan found for this book and member";
             }
-            await _loansRepository.ReturnBook(loan.Id);
+            await _loansRepository.ReturnBook(loan.Id,bookId);
 
             return "Book Returned Successfully";
         }
